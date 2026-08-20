@@ -1,0 +1,51 @@
+{
+  "model_name": "repeat_purchase_classifier",
+  "model_type": "HistGradientBoostingClassifier",
+  "target": "repeat_purchase",
+  "target_definition": "1 si el customer_unique_id tiene >=2 pedidos en el dataset completo; features derivadas exclusivamente del PRIMER pedido (evita fuga de información temporal).",
+  "random_state": 42,
+  "hyperparameters": {
+    "min_samples_leaf": 50,
+    "max_iter": 150,
+    "max_depth": 7,
+    "learning_rate": 0.05,
+    "l2_regularization": 0.0
+  },
+  "primary_metric": "average_precision",
+  "decision_threshold": 0.039696969696969696,
+  "metrics": {
+    "validation": {
+      "average_precision": 0.04936078250451821,
+      "roc_auc": 0.6072840868409566
+    },
+    "test": {
+      "average_precision": 0.05901339211714865,
+      "roc_auc": 0.63080840696275,
+      "brier_score": 0.0317144843278724,
+      "top_decile_lift": 2.2714696370822853
+    }
+  },
+  "training_data": {
+    "n_train": 58997,
+    "n_val": 12642,
+    "n_test": 12643,
+    "base_table_hash": "6d912a8e6f1bf378"
+  },
+  "top_features_by_permutation_importance": [
+    "num__max_installments",
+    "num__price_per_item",
+    "num__total_price",
+    "num__total_freight",
+    "num__freight_ratio",
+    "num__approval_hours",
+    "cat__main_category_grouped_sports_leisure",
+    "num__delivery_vs_estimate_days",
+    "cat__main_category_grouped_furniture_decor",
+    "num__purchase_dow"
+  ],
+  "known_limitations": [
+    "Señal predictiva débil (PR-AUC bajo en términos absolutos), consistente con el EDA de NB1: la recompra depende de factores no observados en el dataset (competencia, necesidad real del producto, etc.).",
+    "Dataset estático 2016-2018; el modelo requeriría reentrenamiento periódico en un despliegue real.",
+    "El desempeño por subgrupo (categoría, estado) se estimó sobre muestras pequeñas; monitorear en producción."
+  ]
+}
