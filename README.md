@@ -16,7 +16,23 @@ entregables/
 plantillas/                           # Plantillas oficiales (.docx/.pptx) usadas como base de los entregables
 caso-de-uso/                          # Brief del caso y plantilla/rúbrica de los notebooks
 docs/                                 # PDFs del proceso de titulación y portada/cláusulas
+requirements.txt                      # Dependencias de análisis/modelado (única fuente de verdad)
+.vscode/settings.json                 # Fija el cwd del kernel de Jupyter en VS Code a la carpeta del notebook
 ```
+
+## Entornos soportados
+
+Ambos notebooks incluyen una celda de bootstrap (sección 1) que detecta el entorno de ejecución y se configura automáticamente:
+
+| Entorno                           | Qué hace la celda de bootstrap                                                | Requisito adicional                                                                                                                                                                      | Guía detallada |
+| --------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| **VS Code / Jupyter local** | Ajusta el cwd a`notebooks/` si el kernel arrancó en la raíz del repo       | Ver[Instalación de dependencias](#instalación-de-dependencias)                                                                                                                          | [README.local.md](README.local.md) |
+| **Google Colab**            | Instala las librerías vía`%pip install` y crea `dataset/`/`artifacts/` | Ejecutar NB1 y NB2**en el mismo runtime**, uno después del otro (Colab no clona el repo, así que NB2 necesita los artefactos que dejó NB1 en esa misma sesión)                 | [README.colab.md](README.colab.md) |
+| **Databricks**              | Instala las librerías vía`%pip install -r ../requirements.txt`             | Clonar el repo con**Databricks Repos** (Repos > Add Repo), no importarlo como notebook suelto — así `dataset/`, `artifacts/` y `requirements.txt` quedan junto al notebook | [README.databricks.md](README.databricks.md) |
+
+En los tres casos, NB2 valida al inicio que los artefactos de NB1 existan en `artifacts/` y falla con un mensaje explícito si faltan, en vez de un error críptico de `pandas`.
+
+Cada guía dedicada cubre paso a paso cómo abrir los notebooks, instalar dependencias, resolver el dataset y las trampas específicas de ese entorno (por ejemplo, cómo mantener NB1 y NB2 en el mismo runtime de Colab, o cómo clonar el repo con Databricks Repos). Las secciones que siguen en este README describen el flujo general, pensado sobre todo para ejecución local.
 
 ## Requisitos
 
@@ -26,17 +42,17 @@ docs/                                 # PDFs del proceso de titulación y portad
 
 ## Instalación de dependencias
 
-El `.venv` incluido solo trae lo esencial para el kernel de Jupyter. Antes de ejecutar los notebooks, instala las librerías de análisis y modelado:
+El `.venv` incluido solo trae lo esencial para el kernel de Jupyter. Antes de ejecutar los notebooks localmente (VS Code, JupyterLab), instala las librerías de análisis y modelado desde `requirements.txt`, la única fuente de verdad para estas dependencias (también la usan las celdas de bootstrap de Colab/Databricks):
 
 ```bash
 # Activa el entorno virtual del proyecto
 # Windows: .venv\Scripts\activate
 # macOS/Linux: source .venv/bin/activate
 
-pip install pandas numpy scikit-learn matplotlib seaborn joblib pyarrow kagglehub
+pip install -r requirements.txt
 ```
 
-> No existe un `requirements.txt` en el repo a propósito — instala solo lo necesario en el entorno que uses para no acoplar el proyecto a una lista de versiones específica.
+En Colab y Databricks no necesitas hacer esto manualmente — la celda de bootstrap de cada notebook instala lo necesario automáticamente (ver tabla de arriba).
 
 ## Datos
 
@@ -54,16 +70,17 @@ Si por alguna razón esa carpeta está vacía o incompleta, el propio NB1 (secci
 
 ## Cómo ejecutar los notebooks
 
-**Importante:** ambos notebooks usan rutas relativas (`dataset/`, `artifacts/`), así que deben ejecutarse **con el directorio de trabajo en `notebooks/`**, no en la raíz del repositorio. Si usas Jupyter Lab/Notebook, ábrelo desde esa carpeta; si usas VS Code, confirma que el kernel resuelva las rutas relativas a `notebooks/`.
+**Importante:** ambos notebooks usan rutas relativas (`dataset/`, `artifacts/`), así que deben ejecutarse **con el directorio de trabajo en `notebooks/`**, no en la raíz del repositorio. Si usas Jupyter Lab/Notebook, ábrelo desde esa carpeta. Si usas **VS Code**, el repo incluye `.vscode/settings.json` con `"jupyter.notebookFileRoot": "${fileDirname}"`, que fija el cwd del kernel a la carpeta del notebook abierto — así no depende de si abriste el repo completo o solo `notebooks/` como workspace. La celda de bootstrap (sección 1) también intenta autocorregir el cwd como red de seguridad si aun así arrancó mal.
 
 1. **Ejecuta `NB1_Estrategia_Datos_EDA.ipynb` completo, de principio a fin**, en orden (Run All). Este notebook:
+
    - Carga y perfila las 9 tablas de Olist.
    - Limpia los datos y construye la tabla analítica a nivel cliente.
    - Corre el análisis exploratorio (EDA) completo.
    - Genera las features, ajusta el pipeline de preprocesamiento y parte los datos en train/val/test.
    - Persiste todo en `notebooks/artifacts/` (parquet, `preprocessor.joblib`, `eda_summary.json`).
-
 2. **Luego ejecuta `NB2_Modelado_Validacion.ipynb` completo, de principio a fin.** Este notebook depende de los artefactos que produce NB1, así que **no puede correrse antes ni de forma independiente**. NB2:
+
    - Carga los artefactos de NB1.
    - Compara modelos candidatos por validación cruzada.
    - Optimiza hiperparámetros del modelo final (`HistGradientBoostingClassifier`).
@@ -77,17 +94,17 @@ Si por alguna razón esa carpeta está vacía o incompleta, el propio NB1 (secci
 
 ## Artefactos generados (`notebooks/artifacts/`)
 
-| Archivo | Descripción |
-|---|---|
-| `X_train/X_val/X_test.parquet`, `y_train/y_val/y_test.parquet` | Splits preprocesados (features transformadas + target) |
-| `raw_train/val/test.parquet` | Splits crudos (pre-transformación), para trazabilidad e interpretabilidad |
-| `preprocessor.joblib` | Pipeline de preprocesamiento (`ColumnTransformer`) ajustado solo en train |
-| `eda_summary.json` | Resumen de hallazgos y decisiones del EDA (NB1) |
-| `orders_history.parquet` | Historial completo de pedidos por cliente, insumo de la segmentación RFM |
-| `repeat_purchase_model.joblib` | Modelo final serializado |
-| `model_card.json` | Métricas, hiperparámetros, semilla y limitaciones conocidas del modelo |
-| `test_predictions.parquet` | Predicciones del modelo sobre el conjunto de test |
-| `customer_segments.parquet` | Segmentación RFM de toda la base de clientes |
+| Archivo                                                            | Descripción                                                                |
+| ------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| `X_train/X_val/X_test.parquet`, `y_train/y_val/y_test.parquet` | Splits preprocesados (features transformadas + target)                      |
+| `raw_train/val/test.parquet`                                     | Splits crudos (pre-transformación), para trazabilidad e interpretabilidad  |
+| `preprocessor.joblib`                                            | Pipeline de preprocesamiento (`ColumnTransformer`) ajustado solo en train |
+| `eda_summary.json`                                               | Resumen de hallazgos y decisiones del EDA (NB1)                             |
+| `orders_history.parquet`                                         | Historial completo de pedidos por cliente, insumo de la segmentación RFM   |
+| `repeat_purchase_model.joblib`                                   | Modelo final serializado                                                    |
+| `model_card.json`                                                | Métricas, hiperparámetros, semilla y limitaciones conocidas del modelo    |
+| `test_predictions.parquet`                                       | Predicciones del modelo sobre el conjunto de test                           |
+| `customer_segments.parquet`                                      | Segmentación RFM de toda la base de clientes                               |
 
 Si regeneras los notebooks, estos artefactos se sobrescriben — y con ellos deja de estar sincronizado el contenido de `entregables/` (que embebe cifras y figuras como texto/imágenes estáticas, no referencias vivas). Si cambias resultados, actualiza también el informe y la presentación.
 
