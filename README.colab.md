@@ -29,13 +29,16 @@ No hace falta seleccionar GPU/TPU — el pipeline es tabular (pandas/scikit-lear
 
 **Kaggle:** como no hay CSV locales, NB1 siempre descargará el dataset desde Kaggle Hub en Colab. Necesitas credenciales de Kaggle de alguna de estas formas:
 
-- **Recomendado — Colab Secrets:** en el panel izquierdo, icono de llave ("Secrets"), agrega un secreto llamado `KAGGLE_API_TOKEN` con tu token (generado en [kaggle.com/settings/api](https://www.kaggle.com/settings/api)). Luego, antes de la celda de descarga, agrega una celda con:
+- **Recomendado — Colab Secrets:** en el panel izquierdo, icono de llave ("Secrets"), agrega dos secretos, `KAGGLE_USERNAME` y `KAGGLE_KEY` (usuario y token generados en [kaggle.com/settings/api](https://www.kaggle.com/settings/api)). Luego, antes de la celda de descarga, agrega una celda con:
   ```python
   import os
   from google.colab import userdata
-  os.environ["KAGGLE_API_TOKEN"] = userdata.get("KAGGLE_API_TOKEN")
+  os.environ["KAGGLE_USERNAME"] = userdata.get("KAGGLE_USERNAME")
+  os.environ["KAGGLE_KEY"] = userdata.get("KAGGLE_KEY")
   ```
-- **Alternativa rápida (menos segura):** descomenta y completa la línea `# os.environ["KAGGLE_API_TOKEN"] = "tu_token_aqui"` dentro de la celda de bootstrap, pegando el token directamente. Evita compartir o dejar público ese notebook con el token escrito.
+- **Alternativa rápida (menos segura):** descomenta y completa las líneas `# os.environ["KAGGLE_USERNAME"] = "tu_usuario"` y `# os.environ["KAGGLE_KEY"] = "tu_token_aqui"` dentro de la celda de bootstrap, pegando las credenciales directamente. Evita compartir o dejar público ese notebook con credenciales escritas.
+
+  Nota: `KAGGLE_USERNAME`/`KAGGLE_KEY` son las variables que `kagglehub` realmente lee — no uses `KAGGLE_API_TOKEN`, no tiene efecto.
 
 ## 3. Abrir y ejecutar NB2 — en el mismo runtime
 
@@ -73,6 +76,6 @@ uploaded = files.upload()  # selecciona artifacts.zip
 | Síntoma | Causa probable | Solución |
 |---|---|---|
 | NB2 lanza `FileNotFoundError: Faltan artefactos de NB1 en 'artifacts/': ...` | NB2 se abrió en un runtime distinto al de NB1 | Vuelve a correr NB1 completo en el runtime actual, o sube el zip de `artifacts/` (ver sección anterior) |
-| Falla la descarga de `kagglehub` con error de autenticación | No configuraste `KAGGLE_API_TOKEN` (ni como Colab Secret ni como variable de entorno) | Sigue la sección "Kaggle" de arriba |
+| Falla la descarga de `kagglehub` con error de autenticación | No configuraste `KAGGLE_USERNAME`/`KAGGLE_KEY` (ni como Colab Secrets ni como variables de entorno) | Sigue la sección "Kaggle" de arriba |
 | `%pip install` tarda mucho o falla por conflicto de versiones | Poco común en Colab, pero puede pasar tras una actualización de la imagen base | Reinicia el runtime (`Runtime > Restart runtime`) y vuelve a correr `Run All` desde cero |
 | El runtime se desconectó a medio proceso | Límite de inactividad/sesión de Colab gratuito | Reconéctate y vuelve a correr NB1 completo antes de NB2 |

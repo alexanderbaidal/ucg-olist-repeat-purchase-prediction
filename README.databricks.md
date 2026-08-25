@@ -25,7 +25,7 @@ Abre `notebooks/NB1_Estrategia_Datos_EDA.ipynb` dentro del Repo, adjunta el clú
 %pip install -q -r ../requirements.txt
 ```
 
-Como los 9 CSV de Olist ya están commiteados en `notebooks/dataset/` (y llegan junto con el Repo), **no necesitas configurar Kaggle** en el flujo normal. El fallback de descarga vía `kagglehub` solo se activa si esa carpeta faltara o estuviera incompleta; en ese caso necesitarías un token de Kaggle expuesto como variable de entorno (por ejemplo vía un [Databricks secret](https://docs.databricks.com/en/security/secrets/index.html) leído en una celda: `os.environ["KAGGLE_API_TOKEN"] = dbutils.secrets.get(scope="...", key="...")`).
+Como los 9 CSV de Olist ya están commiteados en `notebooks/dataset/` (y llegan junto con el Repo), **no necesitas configurar Kaggle** en el flujo normal. El fallback de descarga vía `kagglehub` solo se activa si esa carpeta faltara o estuviera incompleta; en ese caso necesitarías credenciales de Kaggle expuestas como variables de entorno `KAGGLE_USERNAME` y `KAGGLE_KEY` (por ejemplo vía [Databricks secrets](https://docs.databricks.com/en/security/secrets/index.html) leídos en una celda: `os.environ["KAGGLE_USERNAME"] = dbutils.secrets.get(scope="...", key="kaggle-username")` y `os.environ["KAGGLE_KEY"] = dbutils.secrets.get(scope="...", key="kaggle-key")`). El notebook también intenta cargar un `.env` local vía `python-dotenv`, pero no aplica aquí salvo que subas uno manualmente al Repo — usa Databricks secrets en su lugar.
 
 NB1 persiste sus artefactos en `notebooks/artifacts/`, dentro del propio checkout del Repo.
 

@@ -1,0 +1,24 @@
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Secrets (keep .env.example tracked)
+.env
+
+# Python bytecode/cache
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+
+# Local Claude Code project instructions (not versioned)
+CLAUDE.md

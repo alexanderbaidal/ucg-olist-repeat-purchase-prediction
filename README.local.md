@@ -15,17 +15,12 @@ Guía específica para correr `NB1_Estrategia_Datos_EDA.ipynb` y `NB2_Modelado_V
 git clone https://github.com/alexanderbaidal/ucg-olist-repeat-purchase-prediction.git
 cd ucg-olist-repeat-purchase-prediction
 
-# Crea y activa un entorno virtual (opcional pero recomendado)
-python -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
-
 pip install -r requirements.txt
 ```
 
-`requirements.txt` es la única fuente de verdad de dependencias (pandas, scikit-learn, matplotlib, seaborn, joblib, pyarrow, kagglehub) — no instales versiones distintas a mano.
+`requirements.txt` es la única fuente de verdad de dependencias (pandas, scikit-learn, matplotlib, seaborn, joblib, pyarrow, kagglehub, python-dotenv) — no instales versiones distintas a mano.
 
-> Nota sobre el `.venv` que trae el repo: ese entorno checked-in solo incluye lo esencial del kernel de Jupyter (`ipykernel`, `jupyter_client`, etc.), no las librerías de análisis. Si lo usas como kernel, instala igualmente `requirements.txt` dentro de él.
+> Este proyecto corre localmente contra la instalación **global** de Python de la máquina, sin `.venv`. Si tu Python global tiene paquetes rotos o en conflicto con otros proyectos, considera igualmente un entorno virtual (`python -m venv .venv`) — pero en ese caso instala `requirements.txt` y selecciona ese intérprete como kernel de forma explícita en VS Code (ver siguiente sección), para no terminar con dos "Python" que se confunden entre sí.
 
 ## 2. Abrir los notebooks con el directorio de trabajo correcto
 
@@ -33,6 +28,11 @@ Ambos notebooks usan rutas **relativas** (`Path("dataset")`, `Path("artifacts")`
 
 - **VS Code:** el repo ya incluye [`.vscode/settings.json`](.vscode/settings.json) con `"jupyter.notebookFileRoot": "${fileDirname}"`, que fija el cwd del kernel a la carpeta del notebook abierto. Esto funciona sin importar si abriste el repo completo o solo `notebooks/` como carpeta del workspace — no necesitas configurar nada adicional. Si de todas formas el kernel arranca mal (por ejemplo, por una configuración de usuario que sobrescribe el setting del workspace), la celda de bootstrap (sección 1) de cada notebook detecta el problema y hace `os.chdir("notebooks")` automáticamente como red de seguridad.
 - **JupyterLab / Jupyter Notebook:** ábrelo directamente desde la carpeta `notebooks/` (`jupyter lab` ejecutado con ese cwd, o navega ahí antes de abrir los archivos).
+
+**Verificá el kernel/intérprete antes de correr:** si VS Code detecta más de un "Python" (por ejemplo, si además tenés un entorno de Anaconda, otra versión de Python, o un `.venv` viejo dando vueltas), asegurate de seleccionar el intérprete global donde corriste `pip install -r requirements.txt` — click en el selector de kernel (arriba a la derecha del notebook) → **"Select Another Kernel" → "Python Environments"**. Para confirmar cuál está activo, corré en una celda:
+```python
+import sys; print(sys.executable)
+```
 
 ## 3. Ejecutar los notebooks en orden
 
@@ -49,10 +49,15 @@ Los 9 CSV de Olist ya están incluidos en `notebooks/dataset/`, así que no nece
 
 1. Crea una cuenta en [kaggle.com](https://www.kaggle.com) si no tienes una.
 2. Genera un token de API en [kaggle.com/settings/api](https://www.kaggle.com/settings/api).
-3. Expórtalo como variable de entorno antes de abrir Jupyter/VS Code:
+3. Copia `.env.example` a `.env` en la raíz del repo y completa tus credenciales:
    ```bash
-   export KAGGLE_API_TOKEN=tu_token_aqui
+   cp .env.example .env
    ```
+   ```
+   KAGGLE_USERNAME=tu_usuario
+   KAGGLE_KEY=tu_token_aqui
+   ```
+   NB1 carga este archivo automáticamente (vía `python-dotenv`, ya incluido en `requirements.txt`) antes de intentar la descarga. `.env` está en `.gitignore` — nunca se comitea. Alternativa sin archivo: exportar las mismas variables antes de abrir Jupyter/VS Code (`export KAGGLE_USERNAME=... KAGGLE_KEY=...`).
 4. NB1 lo descarga y cachea en `~/.cache/kagglehub/` (no lo vuelve a descargar en corridas posteriores).
 
 ## Troubleshooting
@@ -62,4 +67,4 @@ Los 9 CSV de Olist ya están incluidos en `notebooks/dataset/`, así que no nece
 | `AssertionError: No se encontró la carpeta de datos` / `FileNotFoundError` al leer `dataset/` o `artifacts/` | El kernel arrancó con el cwd en la raíz del repo, no en `notebooks/` | Revisa que `.vscode/settings.json` esté presente y que VS Code lo esté respetando; como alternativa, reinicia el kernel desde la carpeta `notebooks/` |
 | `ModuleNotFoundError: No module named 'sklearn'` (o pandas/seaborn/etc.) | Faltan dependencias en el kernel activo | `pip install -r requirements.txt` en el mismo entorno/kernel que usa el notebook |
 | NB2 lanza `FileNotFoundError: Faltan artefactos de NB1 en 'artifacts/': ...` | NB1 no se ejecutó completo antes, o se ejecutó en otra carpeta/entorno | Corre `NB1_Estrategia_Datos_EDA.ipynb` completo (Run All) primero, en este mismo checkout local |
-| Falla la descarga de Kaggle Hub | Falta `KAGGLE_API_TOKEN` o el token es inválido | Genera un token nuevo en kaggle.com/settings/api y expórtalo antes de abrir Jupyter — o simplemente usa los CSV ya incluidos en `notebooks/dataset/` (no necesitas Kaggle si esa carpeta ya está poblada) |
+| Falla la descarga de Kaggle Hub | Falta `.env` (o las variables `KAGGLE_USERNAME`/`KAGGLE_KEY`) o el token es inválido | Copia `.env.example` a `.env` y completa un token nuevo de kaggle.com/settings/api — o simplemente usa los CSV ya incluidos en `notebooks/dataset/` (no necesitas Kaggle si esa carpeta ya está poblada) |

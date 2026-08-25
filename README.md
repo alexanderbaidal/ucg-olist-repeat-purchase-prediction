@@ -62,10 +62,7 @@ Si por alguna razón esa carpeta está vacía o incompleta, el propio NB1 (secci
 
 1. Crea una cuenta en [kaggle.com](https://www.kaggle.com) si no tienes una.
 2. Genera un token de API en [kaggle.com/settings/api](https://www.kaggle.com/settings/api).
-3. Expórtalo como variable de entorno antes de abrir Jupyter:
-   ```bash
-   export KAGGLE_API_TOKEN=tu_token_aqui
-   ```
+3. Copia `.env.example` a `.env` en la raíz del repo y completa `KAGGLE_USERNAME`/`KAGGLE_KEY` (NB1 lo carga automáticamente vía `python-dotenv`; `.env` está en `.gitignore`, nunca se comitea). Alternativa sin archivo: exportar esas mismas variables antes de abrir Jupyter.
 4. Al ejecutar NB1, si no encuentra los CSV localmente, los descarga y cachea en `~/.cache/kagglehub/` (no vuelve a descargarlos en ejecuciones posteriores).
 
 ## Cómo ejecutar los notebooks
