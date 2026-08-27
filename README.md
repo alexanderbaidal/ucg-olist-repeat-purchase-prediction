@@ -8,17 +8,22 @@ Trabajo de Titulación — Maestría en Data Science e IA (UCG). Caso de ciencia
 notebooks/
   NB1_Estrategia_Datos_EDA.ipynb      # Carga, limpieza, EDA, feature engineering, split train/val/test
   NB2_Modelado_Validacion.ipynb       # Modelado, tuning, evaluación, interpretabilidad, segmentación RFM
-  dataset/                            # CSV crudos de Olist (ya incluidos en el repo)
+  dataset/                            # 9 CSV crudos de Olist (ya incluidos en el repo)
   artifacts/                          # Artefactos generados por los notebooks (parquet, joblib, json)
-entregables/
+entregables/                          # Deliverables finales (no versionados, ver nota abajo)
   Informe_Tecnico_ShopMart_Olist.docx # Informe técnico final
-  Defensa_ShopMart_Olist.pptx         # Presentación de defensa (16 diapositivas)
-plantillas/                           # Plantillas oficiales (.docx/.pptx) usadas como base de los entregables
+  Defensa_ShopMart_Olist.pptx         # Presentación de defensa
+plantillas/                           # Plantillas oficiales (.docx/.pptx/.md) usadas como base de notebooks y entregables
 caso-de-uso/                          # Brief del caso y plantilla/rúbrica de los notebooks
-docs/                                 # PDFs del proceso de titulación y portada/cláusulas
+docs/                                 # PDFs del proceso de titulación, portada y cláusulas
 requirements.txt                      # Dependencias de análisis/modelado (única fuente de verdad)
+.env.example                          # Plantilla de credenciales de Kaggle — copiar a .env (gitignored)
 .vscode/settings.json                 # Fija el cwd del kernel de Jupyter en VS Code a la carpeta del notebook
+README.md                             # Este archivo
+README.local.md / .colab.md / .databricks.md  # Guías detalladas por entorno de ejecución
 ```
+
+> **`entregables/`** está en `.gitignore`: son binarios generados (informe/deck) que cambian con cada regeneración de los notebooks, así que no se versionan — pero siguen siendo parte del proyecto y se distribuyen junto al repo. **`CLAUDE.md`** también es local (instrucciones para agentes de IA), no se versiona ni viaja con el repo.
 
 ## Entornos soportados
 
@@ -36,21 +41,19 @@ Cada guía dedicada cubre paso a paso cómo abrir los notebooks, instalar depend
 
 ## Requisitos
 
-- **Python 3.10+** (el `.venv` del repo usa Python 3.14 vía `uv`).
-- Jupyter (el `.venv` ya trae `ipykernel`/`jupyter_client`, pero **no** las librerías de análisis).
+- **Python 3.10+**. El proyecto corre localmente contra la instalación **global** de Python de la máquina (no usa `.venv`) — ver [README.local.md](README.local.md) si preferís usar un entorno virtual igual.
+- Jupyter con soporte de kernel para ese Python (`ipykernel`).
 - Cuenta de Kaggle (opcional — solo si el dataset no está ya en `notebooks/dataset/`; ver sección de datos).
 
 ## Instalación de dependencias
 
-El `.venv` incluido solo trae lo esencial para el kernel de Jupyter. Antes de ejecutar los notebooks localmente (VS Code, JupyterLab), instala las librerías de análisis y modelado desde `requirements.txt`, la única fuente de verdad para estas dependencias (también la usan las celdas de bootstrap de Colab/Databricks):
+Antes de ejecutar los notebooks localmente (VS Code, JupyterLab), instala las librerías de análisis y modelado desde `requirements.txt`, la única fuente de verdad para estas dependencias (también la usan las celdas de bootstrap de Colab/Databricks):
 
 ```bash
-# Activa el entorno virtual del proyecto
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
-
 pip install -r requirements.txt
 ```
+
+Si en VS Code el kernel muestra un error de "kernel crashed" o `ModuleNotFoundError` al correr una celda, verificá que el kernel seleccionado sea el mismo intérprete donde corriste ese `pip install` (`import sys; print(sys.executable)` en una celda lo confirma) — un intérprete distinto instalado en la misma máquina es la causa más común.
 
 En Colab y Databricks no necesitas hacer esto manualmente — la celda de bootstrap de cada notebook instala lo necesario automáticamente (ver tabla de arriba).
 
@@ -108,8 +111,8 @@ Si regeneras los notebooks, estos artefactos se sobrescriben — y con ellos dej
 ## Entregables
 
 - **Informe técnico:** [`entregables/Informe_Tecnico_ShopMart_Olist.docx`](entregables/Informe_Tecnico_ShopMart_Olist.docx) — documento completo con metodología, EDA, modelado, ética y conclusiones, construido sobre `plantillas/Plantilla Informe Tecnico.docx`.
-- **Presentación de defensa:** [`entregables/Defensa_ShopMart_Olist.pptx`](entregables/Defensa_ShopMart_Olist.pptx) — 16 diapositivas construidas sobre `plantillas/Plantilla de Presentación para la Defensa de Análisis de Caso.pptx`.
+- **Presentación de defensa:** [`entregables/Defensa_ShopMart_Olist.pptx`](entregables/Defensa_ShopMart_Olist.pptx) — construida sobre `plantillas/Plantilla de Presentación para la Defensa de Análisis de Caso.pptx`, con notas del orador desarrolladas por slide.
 
 ## Más contexto para quien edite este repositorio
 
-Ver [`CLAUDE.md`](CLAUDE.md) para el detalle del contrato de artefactos entre NB1 y NB2, decisiones de modelado ya validadas contra los números reales (evitar reintroducir narrativas ya descartadas), y notas sobre el entorno de ejecución.
+Este repo usa un `CLAUDE.md` local (instrucciones para agentes de IA tipo Claude Code) con el detalle del contrato de artefactos entre NB1 y NB2, decisiones de modelado ya validadas contra los números reales, y notas sobre el entorno de ejecución. No se versiona ni viaja con el clon del repo — es un archivo de configuración personal de cada colaborador.
