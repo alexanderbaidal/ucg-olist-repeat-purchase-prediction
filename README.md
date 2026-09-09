@@ -10,12 +10,12 @@ notebooks/
   NB2_Modelado_Validacion.ipynb       # Modelado, tuning, evaluación, interpretabilidad, segmentación RFM
   dataset/                            # 9 CSV crudos de Olist (ya incluidos en el repo)
   artifacts/                          # Artefactos generados por los notebooks (parquet, joblib, json)
-entregables/                          # Deliverables finales (no versionados, ver nota abajo)
-  Informe_Tecnico_ShopMart_Olist.docx # Informe técnico final
-  Defensa_ShopMart_Olist.pptx         # Presentación de defensa
 plantillas/                           # Plantillas oficiales (.docx/.pptx/.md) usadas como base de notebooks y entregables
 caso-de-uso/                          # Brief del caso y plantilla/rúbrica de los notebooks
-docs/                                 # PDFs del proceso de titulación, portada y cláusulas
+docs/                                 # Entregables finales y PDFs del proceso de titulación (todo versionado)
+  Informe_Tecnico_ShopMart_Olist.docx # Informe técnico final
+  Defensa_ShopMart_Olist.pptx         # Presentación de defensa
+  ...                                  # PDFs de proceso, portada y cláusulas
 requirements.txt                      # Dependencias de análisis/modelado (única fuente de verdad)
 .env.example                          # Plantilla de credenciales de Kaggle — copiar a .env (gitignored)
 .vscode/settings.json                 # Fija el cwd del kernel de Jupyter en VS Code a la carpeta del notebook
@@ -23,7 +23,7 @@ README.md                             # Este archivo
 README.local.md / .colab.md / .databricks.md  # Guías detalladas por entorno de ejecución
 ```
 
-> **`entregables/`** está en `.gitignore`: son binarios generados (informe/deck) que cambian con cada regeneración de los notebooks, así que no se versionan — pero siguen siendo parte del proyecto y se distribuyen junto al repo. **`CLAUDE.md`** también es local (instrucciones para agentes de IA), no se versiona ni viaja con el repo.
+> **`CLAUDE.md`** es local (instrucciones para agentes de IA), no se versiona ni viaja con el repo.
 
 ## Entornos soportados
 
@@ -106,12 +106,12 @@ Si por alguna razón esa carpeta está vacía o incompleta, el propio NB1 (secci
 | `test_predictions.parquet`                                       | Predicciones del modelo sobre el conjunto de test                           |
 | `customer_segments.parquet`                                      | Segmentación RFM de toda la base de clientes                               |
 
-Si regeneras los notebooks, estos artefactos se sobrescriben — y con ellos deja de estar sincronizado el contenido de `entregables/` (que embebe cifras y figuras como texto/imágenes estáticas, no referencias vivas). Si cambias resultados, actualiza también el informe y la presentación.
+Si regeneras los notebooks, estos artefactos se sobrescriben — y con ellos deja de estar sincronizado el contenido de `docs/` (que embebe cifras y figuras como texto/imágenes estáticas, no referencias vivas). Si cambias resultados, actualiza también el informe y la presentación.
 
 ## Entregables
 
-- **Informe técnico:** [`entregables/Informe_Tecnico_ShopMart_Olist.docx`](entregables/Informe_Tecnico_ShopMart_Olist.docx) — documento completo con metodología, EDA, modelado, ética y conclusiones, construido sobre `plantillas/Plantilla Informe Tecnico.docx`.
-- **Presentación de defensa:** [`entregables/Defensa_ShopMart_Olist.pptx`](entregables/Defensa_ShopMart_Olist.pptx) — construida sobre `plantillas/Plantilla de Presentación para la Defensa de Análisis de Caso.pptx`, con notas del orador desarrolladas por slide.
+- **Informe técnico:** [`docs/Informe_Tecnico_ShopMart_Olist.docx`](docs/Informe_Tecnico_ShopMart_Olist.docx) — documento completo con metodología, EDA, modelado, ética y conclusiones, construido sobre `plantillas/Plantilla Informe Tecnico.docx`.
+- **Presentación de defensa:** [`docs/Defensa_ShopMart_Olist.pptx`](docs/Defensa_ShopMart_Olist.pptx) — construida sobre `plantillas/Plantilla de Presentación para la Defensa de Análisis de Caso.pptx`, con notas del orador desarrolladas por slide.
 
 ## Más contexto para quien edite este repositorio
 
