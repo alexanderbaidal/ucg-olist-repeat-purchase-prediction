@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-The binding rules here are formalized in `.specify/memory/constitution.md` (v1.0.0) — this file is
+The binding rules here are formalized in `.specify/memory/constitution.md` (v1.1.0) — this file is
 the day-to-day operational detail; that one is the governance source of truth. Keep both in sync: a
 change to a non-negotiable rule (scope discipline, the fixed seed, the artifact contract, the settled
 modeling decisions, or the surgical-edit convention) must be reflected in both files together.
@@ -58,6 +58,14 @@ both are updated together. The contract:
 | `eda_summary.json` | NB1 §6 | NB2 (sanity checks / model card) | EDA decisions, target definition, class balance, feature lists |
 | `orders_history.parquet` | NB1 §6 | NB2 §6 | Full per-customer order history (not just first order) — the only input to the RFM segmentation |
 | `repeat_purchase_model.joblib`, `model_card.json`, `test_predictions.parquet`, `customer_segments.parquet` | NB2 §7 | `docs/` (manually) | Final deliverables; `docs/` embeds their numbers/figures as static text/images, so regenerating the notebooks desyncs `docs/` until it's manually updated |
+
+**Rule**: whenever re-running a notebook changes an execution result (metric, threshold, figure,
+segment profile, or any other number/plot quoted in the final documents), the final deliverables —
+`docs/Informe_Tecnico_ShopMart_Olist.docx` (and its PDF export,
+`docs/5 - Personalización Data-Driven en E-Commerce_ Potenciando la Retención de Clientes.pdf`) and
+`docs/Defensa_ShopMart_Olist.pptx` — MUST be updated to match before the change is considered
+complete. This is a hard requirement, not a flag-and-move-on: only skip it if the user explicitly
+defers the sync in that conversation, and even then say plainly that the deliverables are now stale.
 
 ## Key modeling decisions already validated (don't re-derive from scratch)
 

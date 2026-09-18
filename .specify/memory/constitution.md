@@ -1,34 +1,29 @@
 <!--
 Sync Impact Report
 ==================
-Version change: [TEMPLATE] → 1.0.0 (initial ratification — no prior filled constitution existed)
-Bump rationale: MAJOR because this is the first concrete version establishing binding
-  principles (semver starts counting from a defined baseline, not from the unfilled template).
+Version change: 1.0.0 → 1.1.0
+Bump rationale: MINOR — materially expanded guidance on the existing "Documentation & Deliverables
+  Sync" section: it now names the exact final deliverable files and turns the obligation from
+  "flag as needing a manual update" into a hard MUST-update-before-done rule (deferral requires an
+  explicit user call, and even then the drift must be surfaced, not silently dropped).
 
-Modified principles: none (first fill; all [PRINCIPLE_N_*] placeholders replaced)
+Modified principles: none (Core Principles I–V unchanged)
+Modified sections:
+  - Documentation & Deliverables Sync — strengthened: names
+    docs/Informe_Tecnico_ShopMart_Olist.docx (+ its PDF export) and docs/Defensa_ShopMart_Olist.pptx
+    as the final deliverables that MUST be updated whenever an execution result changes.
 
-Added sections:
-  - I. Academic Scope Discipline (NON-NEGOTIABLE)
-  - II. Reproducibility & Fixed Seed
-  - III. NB1→NB2 Artifact Contract Integrity
-  - IV. Validated Modeling Decisions Are Settled
-  - V. Surgical, Traceable Notebook Edits
-  - Dataset, Dependencies & Environment Handling (Section 2)
-  - Documentation & Deliverables Sync (Section 3)
-  - Governance
-
+Added sections: none
 Removed sections: none
 
 Templates requiring updates:
-  - .specify/templates/plan-template.md — ✅ no change needed (Constitution Check gate already
-    reads dynamically from this file; generic src/tests options are marked [REMOVE IF UNUSED])
+  - .specify/templates/plan-template.md — ✅ no change needed (Constitution Check gate reads
+    dynamically from this file)
   - .specify/templates/spec-template.md — ✅ no change needed (technology-agnostic, no conflict)
-  - .specify/templates/tasks-template.md — ✅ no change needed (tests explicitly marked OPTIONAL,
-    consistent with Principle I; src/tests paths are generic defaults adjusted per plan.md)
+  - .specify/templates/tasks-template.md — ✅ no change needed (tests explicitly OPTIONAL, consistent
+    with Principle I)
   - .specify/templates/commands/*.md — ⚠ directory not present in this repo; nothing to update
-  - CLAUDE.md — ✅ no change needed (this constitution formalizes rules already stated there)
-  - README.md / README.local.md / README.colab.md / README.databricks.md — ✅ no change needed
-    (environment-specific instructions already match Section 2 below)
+  - CLAUDE.md — ⚠ pending — should mirror the strengthened deliverables-sync rule in the same change
 
 Follow-up TODOs: none — no placeholders were deferred.
 -->
@@ -124,9 +119,17 @@ these MUST be consulted before treating an environment-detection issue as a bug 
 `docs/` embeds the notebooks' final numbers and figures as static text/images (report, presentation,
 model card narrative). Regenerating the notebooks — even without changing their logic, if the
 underlying artifacts change — desyncs `docs/` until it is manually updated; nothing in this repo
-auto-syncs them. Any change that alters NB1's or NB2's outputs (metrics, thresholds, figures, segment
-profiles) MUST be flagged to the user as requiring a manual `docs/` update, and MUST NOT be presented
-as complete until that sync is either done or explicitly deferred by the user.
+auto-syncs them. The final deliverables that must stay in sync with execution results are
+`docs/Informe_Tecnico_ShopMart_Olist.docx` (and its exported PDF,
+`docs/5 - Personalización Data-Driven en E-Commerce_ Potenciando la Retención de Clientes.pdf`) and
+`docs/Defensa_ShopMart_Olist.pptx`.
+
+Every time a notebook re-run changes an execution result — metrics, thresholds, figures, segment
+profiles, or any other number/plot quoted in these documents — the final documents MUST be updated to
+match before the change is considered complete. This is a MUST, not a flag-and-defer: a change is not
+done while a final deliverable quotes a stale number or figure. The only exception is when the user
+explicitly defers the sync in that conversation, in which case the pending drift MUST be called out
+plainly so it isn't silently forgotten.
 
 ## Governance
 
@@ -148,4 +151,4 @@ via `/speckit-constitution`, and propagate the change to `CLAUDE.md` and any dep
 compliance is reviewed manually — by whoever is editing the notebooks or `docs/` in a given session —
 against this file and `CLAUDE.md` before a change is considered done, not enforced by a pipeline gate.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-18 | **Last Amended**: 2026-09-18
+**Version**: 1.1.0 | **Ratified**: 2026-09-18 | **Last Amended**: 2026-09-18
