@@ -1,9 +1,9 @@
-pandas
-numpy
-scikit-learn
+pandas==2.3.0
+numpy==2.5.3
+scikit-learn==1.7.2
 matplotlib
 seaborn
 joblib
-pyarrow
+pyarrow==25.0.1
 kagglehub
 python-dotenv
